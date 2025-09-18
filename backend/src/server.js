@@ -92,7 +92,7 @@ async function initRedis() {
 
   // Cross-instance message handler (set after ready)
   redisSub.on("message", (channelName, message) => {
-    console.log("redis subscribe messges ---->>>>", channelName, nessage);
+    console.log("redis subscribe messges ---->>>>", channelName, message);
     try {
       const event = JSON.parse(message);
       console.log("message on redis sub ---->>>>", event);
