@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react'
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '')
-const WS_URL = (API_BASE.startsWith('https') ? API_BASE.replace('https', 'wss') : API_BASE.replace('http', 'ws')) + '/ws'
+// Force HTTP for demo - prevent HTTPS redirects
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '').replace('https://', 'http://')
+const WS_URL = API_BASE.replace('http://', 'ws://').replace('https://', 'ws://') + '/ws'
 
 export default function App() {
   const [channel, setChannel] = useState('general')
