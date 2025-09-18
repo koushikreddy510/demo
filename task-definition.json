@@ -1,0 +1,51 @@
+{
+  "family": "plivo-backend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::741879316627:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "plivo-backend",
+      "image": "741879316627.dkr.ecr.us-east-1.amazonaws.com/demo/pub-sub:latest",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "PORT",
+          "value": "3000"
+        },
+        {
+          "name": "CORS_ORIGIN",
+          "value": "*"
+        },
+        {
+          "name": "MAX_HISTORY",
+          "value": "50"
+        },
+        {
+          "name": "MONGODB_URI",
+          "value": "mongodb+srv://user:password@cluster.mongodb.net/plivo_demo?retryWrites=true&w=majority"
+        },
+        {
+          "name": "REDIS_URL",
+          "value": "rediss://default:BYlGghoQvlVU8IXKorsg2O3EVpCWEXne@redis-11730.c281.us-east-1-2.ec2.redns.redis-cloud.com:11730"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/plivo-backend",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
