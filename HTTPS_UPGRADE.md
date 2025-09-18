@@ -3,6 +3,7 @@
 ## 🎯 Overview
 
 Converting our HTTP setup to HTTPS is straightforward and involves:
+
 1. **SSL Certificate** (free with AWS Certificate Manager)
 2. **HTTPS Listener** on ALB
 3. **WSS WebSocket** connections
@@ -11,6 +12,7 @@ Converting our HTTP setup to HTTPS is straightforward and involves:
 ## 🚀 Backend HTTPS Setup (5 minutes)
 
 ### 1. Request SSL Certificate
+
 ```bash
 # Request certificate for your domain
 aws acm request-certificate \
@@ -28,6 +30,7 @@ aws acm request-certificate \
 ```
 
 ### 2. Add HTTPS Listener to ALB
+
 ```bash
 # Add HTTPS listener (port 443)
 aws elbv2 create-listener \
@@ -46,6 +49,7 @@ aws elbv2 modify-listener \
 ```
 
 ### 3. Update DNS (if using custom domain)
+
 ```bash
 # Create Route 53 record pointing to ALB
 aws route53 change-resource-record-sets \
@@ -71,6 +75,7 @@ aws route53 change-resource-record-sets \
 ### Option A: CloudFront + S3 (Recommended)
 
 #### 1. Deploy to S3
+
 ```bash
 # Create S3 bucket
 aws s3 mb s3://your-app-frontend-bucket --region us-east-1
@@ -84,6 +89,7 @@ aws s3 sync dist/ s3://your-app-frontend-bucket --delete
 ```
 
 #### 2. Create CloudFront Distribution
+
 ```bash
 # Create CloudFront distribution
 cat > cloudfront-config.json << EOF
@@ -119,6 +125,7 @@ aws cloudfront create-distribution --distribution-config file://cloudfront-confi
 ```
 
 ### Option B: Amplify with Custom Domain
+
 ```bash
 # Deploy to Amplify (forces HTTPS)
 aws amplify create-app --name your-app --repository https://github.com/user/repo
@@ -133,17 +140,19 @@ aws amplify create-domain-association \
 ## 🔄 Code Changes Required
 
 ### 1. Frontend WebSocket URL Update
+
 ```javascript
 // Before (HTTP)
-const API_BASE = 'http://your-alb-url.elb.amazonaws.com'
-const WS_URL = 'ws://your-alb-url.elb.amazonaws.com/ws'
+const API_BASE = "http://your-alb-url.elb.amazonaws.com";
+const WS_URL = "ws://your-alb-url.elb.amazonaws.com/ws";
 
 // After (HTTPS)
-const API_BASE = 'https://api.yourdomain.com'
-const WS_URL = 'wss://api.yourdomain.com/ws'  // ← WSS instead of WS
+const API_BASE = "https://api.yourdomain.com";
+const WS_URL = "wss://api.yourdomain.com/ws"; // ← WSS instead of WS
 ```
 
 ### 2. Environment Variables
+
 ```bash
 # Update frontend build
 VITE_API_URL=https://api.yourdomain.com
@@ -153,6 +162,7 @@ CORS_ORIGIN=https://app.yourdomain.com
 ```
 
 ### 3. CORS Update (Backend)
+
 ```javascript
 // Update CORS origin in backend/.env
 CORS_ORIGIN=https://app.yourdomain.com
@@ -164,6 +174,7 @@ CORS_ORIGIN=https://app.yourdomain.com,http://localhost:3000
 ## 🧪 Testing HTTPS Setup
 
 ### Backend Tests
+
 ```bash
 # Test HTTPS endpoint
 curl https://api.yourdomain.com/healthz
@@ -174,6 +185,7 @@ wscat -c wss://api.yourdomain.com/ws
 ```
 
 ### Frontend Tests
+
 ```bash
 # Test HTTPS frontend
 curl https://app.yourdomain.com
@@ -228,21 +240,24 @@ echo "Backend: https://api.yourdomain.com"
 ## 🚨 Common HTTPS Issues & Solutions
 
 ### Mixed Content Errors
+
 ```
 Problem: HTTPS page loading HTTP resources
 Solution: Ensure ALL resources use HTTPS URLs
 ```
 
 ### WebSocket Connection Failed
+
 ```
 Problem: WSS connection fails
-Solution: 
+Solution:
 1. Check ALB has HTTPS listener on port 443
 2. Verify certificate is valid
 3. Use wss:// not ws:// in frontend
 ```
 
 ### Certificate Validation
+
 ```
 Problem: Certificate stuck in "Pending Validation"
 Solution:
@@ -254,11 +269,13 @@ Solution:
 ## 💰 HTTPS Costs
 
 ### Free Components
+
 - ✅ **SSL Certificate** (AWS Certificate Manager)
 - ✅ **ALB HTTPS listener** (same cost as HTTP)
 - ✅ **Route 53 DNS** (minimal cost)
 
 ### Paid Components
+
 - 💰 **CloudFront** (~$0.085/GB)
 - 💰 **Custom Domain** (~$12/year for .com)
 - 💰 **Route 53 Hosted Zone** (~$0.50/month)
@@ -266,19 +283,21 @@ Solution:
 ## 🎯 Production Deployment Strategy
 
 ### Phase 1: Dual Protocol Support
+
 ```javascript
 // Support both HTTP and HTTPS during transition
-const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
+const protocol = window.location.protocol === "https:" ? "https:" : "http:";
+const wsProtocol = protocol === "https:" ? "wss:" : "ws:";
 const API_BASE = `${protocol}//api.yourdomain.com`;
 const WS_URL = `${wsProtocol}//api.yourdomain.com/ws`;
 ```
 
 ### Phase 2: HTTPS-Only
+
 ```javascript
 // Force HTTPS in production
-const API_BASE = 'https://api.yourdomain.com';
-const WS_URL = 'wss://api.yourdomain.com/ws';
+const API_BASE = "https://api.yourdomain.com";
+const WS_URL = "wss://api.yourdomain.com/ws";
 ```
 
 ## 🏆 Best Practices

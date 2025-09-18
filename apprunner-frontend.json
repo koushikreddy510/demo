@@ -1,0 +1,23 @@
+{
+  "ServiceName": "demo-frontend-http",
+  "SourceConfiguration": {
+    "ImageRepository": {
+      "ImageIdentifier": "741879316627.dkr.ecr.us-east-1.amazonaws.com/demo/frontend:latest",
+      "ImageConfiguration": {
+        "Port": "80",
+        "RuntimeEnvironmentVariables": {}
+      },
+      "ImageRepositoryType": "ECR"
+    },
+    "AutoDeploymentsEnabled": false
+  },
+  "InstanceConfiguration": {
+    "Cpu": "0.25 vCPU",
+    "Memory": "0.5 GB"
+  },
+  "NetworkConfiguration": {
+    "EgressConfiguration": {
+      "EgressType": "DEFAULT"
+    }
+  }
+}

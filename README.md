@@ -28,6 +28,7 @@ A complete guide for deploying a React frontend + Node.js backend WebSocket appl
 ## 🚀 Quick Start Commands
 
 ### Initial Setup
+
 ```bash
 # Clone and setup
 git clone <your-repo>
@@ -41,6 +42,7 @@ aws sts get-caller-identity  # Verify credentials
 ## 🔧 Backend Deployment (Node.js + ECS)
 
 ### 1. Backend Application Structure
+
 ```
 backend/
 ├── src/
@@ -52,6 +54,7 @@ backend/
 ```
 
 ### 2. Backend Environment Setup
+
 ```bash
 # Create backend/.env file
 cat > backend/.env << EOF
@@ -66,6 +69,7 @@ EOF
 ```
 
 ### 3. Backend Docker Build & Push
+
 ```bash
 # Build Docker image
 cd backend
@@ -83,6 +87,7 @@ docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/demo/backend:latest
 ```
 
 ### 4. ECS Infrastructure Setup
+
 ```bash
 # Create ECS cluster
 aws ecs create-cluster --cluster-name your-cluster --region us-east-1
@@ -131,6 +136,7 @@ aws ecs register-task-definition --cli-input-json file://task-definition.json --
 ```
 
 ### 5. Application Load Balancer Setup
+
 ```bash
 # Create ALB
 aws elbv2 create-load-balancer \
@@ -159,6 +165,7 @@ aws elbv2 create-listener \
 ```
 
 ### 6. ECS Service Creation
+
 ```bash
 # Create ECS service with load balancer
 aws ecs create-service \
@@ -177,6 +184,7 @@ aws ecs create-service \
 ### Option A: ECR-Based Deployment (Recommended)
 
 #### 1. Frontend Docker Setup
+
 ```bash
 # Create production Dockerfile
 cat > frontend/Dockerfile.production << EOF
@@ -200,6 +208,7 @@ EOF
 ```
 
 #### 2. Build and Push Frontend
+
 ```bash
 cd frontend
 docker build --platform linux/amd64 -f Dockerfile.production -t your-frontend .
@@ -213,6 +222,7 @@ docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/demo/frontend:latest
 ```
 
 #### 3. EC2 Deployment with ECR
+
 ```bash
 # Create IAM role for ECR access
 cat > ec2-ecr-role-policy.json << EOF
@@ -286,6 +296,7 @@ aws ec2 run-instances \
 ### Option B: Local Build Deployment
 
 #### 1. Build Locally and Deploy
+
 ```bash
 cd frontend
 npm run build
@@ -315,12 +326,14 @@ ssh -i your-key.pem ec2-user@<public-ip> "
 ## 🔧 Environment Configuration
 
 ### Frontend Environment Variables
+
 ```bash
 # For build-time configuration
 VITE_API_URL=http://your-backend-alb-url.elb.amazonaws.com
 ```
 
 ### Backend Environment Variables
+
 ```bash
 CORS_ORIGIN=*
 PORT=3000
@@ -332,6 +345,7 @@ MAX_HISTORY=50
 ## 🧪 Testing Your Deployment
 
 ### Backend Health Check
+
 ```bash
 curl http://your-alb-url.elb.amazonaws.com/healthz
 # Should return: ok
@@ -341,6 +355,7 @@ curl http://your-alb-url.elb.amazonaws.com/metrics
 ```
 
 ### Frontend Access
+
 ```bash
 curl http://your-frontend-ip/
 # Should return: HTML with React app
@@ -352,6 +367,7 @@ ws.send(JSON.stringify({type: 'subscribe', channels: ['test']}));
 ```
 
 ### Full Integration Test
+
 1. Open frontend URL in browser
 2. Click "Connect" - should show "Connected" status
 3. Type message and click "Publish"
@@ -363,12 +379,14 @@ ws.send(JSON.stringify({type: 'subscribe', channels: ['test']}));
 ### Common Issues
 
 #### Mixed Content Error (HTTPS/HTTP)
+
 ```
 Error: Mixed Content - HTTPS page loading HTTP resources
 Solution: Ensure both frontend and backend use same protocol (HTTP or HTTPS)
 ```
 
 #### WebSocket Connection Failed
+
 ```bash
 # Check backend logs
 aws ecs describe-services --cluster your-cluster --services your-backend-service
@@ -379,6 +397,7 @@ aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing
 ```
 
 #### Docker Build Issues
+
 ```bash
 # Platform mismatch (M1 Mac → x86 AWS)
 docker build --platform linux/amd64 -t your-app .
@@ -388,6 +407,7 @@ docker build --no-cache -t your-app .
 ```
 
 #### ECR Access Denied
+
 ```bash
 # Re-login to ECR
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
@@ -399,12 +419,14 @@ aws sts get-caller-identity
 ## 📝 Deployment Checklist
 
 ### Pre-deployment
+
 - [ ] AWS CLI configured and authenticated
 - [ ] Environment variables configured
 - [ ] Database connections tested (MongoDB, Redis)
 - [ ] Docker images built and tested locally
 
 ### Backend Deployment
+
 - [ ] ECR repository created
 - [ ] Docker image pushed to ECR
 - [ ] ECS cluster created
@@ -415,6 +437,7 @@ aws sts get-caller-identity
 - [ ] Health check endpoint responding
 
 ### Frontend Deployment
+
 - [ ] Frontend built with correct API URL
 - [ ] ECR repository created (if using ECR approach)
 - [ ] IAM roles configured for EC2 ECR access
@@ -424,6 +447,7 @@ aws sts get-caller-identity
 - [ ] WebSocket connection working
 
 ### Post-deployment Testing
+
 - [ ] Backend health check: `GET /healthz`
 - [ ] Frontend loads correctly
 - [ ] WebSocket connection established
@@ -433,6 +457,7 @@ aws sts get-caller-identity
 ## 🔄 Updates and Maintenance
 
 ### Backend Updates
+
 ```bash
 # Build new version
 docker build --platform linux/amd64 -t your-backend:v2 .
@@ -444,6 +469,7 @@ aws ecs update-service --cluster your-cluster --service your-backend-service --f
 ```
 
 ### Frontend Updates
+
 ```bash
 # ECR approach
 docker build --platform linux/amd64 -f Dockerfile.production -t your-frontend:v2 .
@@ -462,11 +488,13 @@ ssh -i your-key.pem ec2-user@<public-ip> "
 ## 💰 Cost Optimization
 
 ### Development Environment
+
 - Use t3.micro instances (free tier eligible)
 - Single AZ deployment
 - Minimal ECS tasks (1 instance)
 
 ### Production Environment
+
 - Multi-AZ deployment for high availability
 - Auto Scaling Groups for frontend
 - ECS Service Auto Scaling for backend

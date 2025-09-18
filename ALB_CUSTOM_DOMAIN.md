@@ -3,11 +3,13 @@
 ## 🎯 Why This Solves Everything
 
 Instead of using the ugly ALB URL:
+
 ```
 ❌ http://plivo-alb-1680385896.us-east-1.elb.amazonaws.com
 ```
 
 You get a clean, professional HTTPS domain:
+
 ```
 ✅ https://api.yourdomain.com
 ✅ wss://api.yourdomain.com/ws
@@ -16,6 +18,7 @@ You get a clean, professional HTTPS domain:
 ## 🚀 Complete Setup Process
 
 ### Step 1: Get a Domain (Optional - Can Use Existing)
+
 ```bash
 # If you don't have a domain, register one
 # Cost: ~$12/year for .com
@@ -23,6 +26,7 @@ You get a clean, professional HTTPS domain:
 ```
 
 ### Step 2: Create Hosted Zone in Route 53
+
 ```bash
 # Create hosted zone for your domain
 aws route53 create-hosted-zone \
@@ -35,6 +39,7 @@ HOSTED_ZONE_ID="Z1234567890ABC"
 ```
 
 ### Step 3: Request SSL Certificate
+
 ```bash
 # Request certificate for API subdomain
 aws acm request-certificate \
@@ -47,6 +52,7 @@ CERT_ARN="arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234
 ```
 
 ### Step 4: Validate Certificate
+
 ```bash
 # Get validation records
 aws acm describe-certificate --certificate-arn $CERT_ARN --region us-east-1
@@ -71,6 +77,7 @@ aws acm wait certificate-validated --certificate-arn $CERT_ARN --region us-east-
 ```
 
 ### Step 5: Add HTTPS Listener to Your Existing ALB
+
 ```bash
 # Get your existing ALB ARN
 ALB_ARN=$(aws elbv2 describe-load-balancers --names plivo-alb --query 'LoadBalancers[0].LoadBalancerArn' --output text --region us-east-1)
@@ -89,6 +96,7 @@ aws elbv2 create-listener \
 ```
 
 ### Step 6: Point Domain to ALB
+
 ```bash
 # Get ALB DNS name
 ALB_DNS=$(aws elbv2 describe-load-balancers --names plivo-alb --query 'LoadBalancers[0].DNSName' --output text --region us-east-1)
@@ -113,6 +121,7 @@ aws route53 change-resource-record-sets \
 ```
 
 ### Step 7: Update Frontend Code
+
 ```javascript
 // Update your React app
 const API_BASE = "https://api.yourdomain.com";
@@ -120,6 +129,7 @@ const WS_URL = "wss://api.yourdomain.com/ws";
 ```
 
 ### Step 8: Optional - Redirect HTTP to HTTPS
+
 ```bash
 # Modify existing HTTP listener to redirect to HTTPS
 HTTP_LISTENER_ARN=$(aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN --query 'Listeners[?Port==`80`].ListenerArn' --output text --region us-east-1)
@@ -133,6 +143,7 @@ aws elbv2 modify-listener \
 ## 🧪 Testing Your Setup
 
 ### Test HTTPS API
+
 ```bash
 # Test health endpoint
 curl https://api.yourdomain.com/healthz
@@ -144,34 +155,39 @@ curl https://api.yourdomain.com/metrics
 ```
 
 ### Test WSS WebSocket
+
 ```javascript
 // In browser console
-const ws = new WebSocket('wss://api.yourdomain.com/ws');
+const ws = new WebSocket("wss://api.yourdomain.com/ws");
 ws.onopen = () => {
-  console.log('✅ WSS Connected!');
-  ws.send(JSON.stringify({type: 'subscribe', channels: ['test']}));
+  console.log("✅ WSS Connected!");
+  ws.send(JSON.stringify({ type: "subscribe", channels: ["test"] }));
 };
-ws.onmessage = (event) => console.log('Message:', event.data);
+ws.onmessage = (event) => console.log("Message:", event.data);
 ```
 
 ## 🎯 Benefits of This Approach
 
 ### ✅ **Professional URLs**
+
 - `https://api.yourdomain.com` instead of ugly ALB URL
 - `wss://api.yourdomain.com/ws` for WebSocket
 - Branded, memorable, trustworthy
 
 ### ✅ **Security**
+
 - SSL/TLS encryption
 - Browser security indicators (lock icon)
 - No mixed content warnings
 
 ### ✅ **Flexibility**
+
 - Can change backend infrastructure without changing URLs
 - Easy to add CDN, caching, etc.
 - Professional appearance for demos
 
 ### ✅ **Cost Effective**
+
 - SSL certificate: **FREE** (AWS Certificate Manager)
 - Route 53 hosted zone: **$0.50/month**
 - Domain: **~$12/year** (optional if you have one)
@@ -259,6 +275,7 @@ echo "const WS_URL = 'wss://$SUBDOMAIN/ws';"
 ## 🎯 For Machine Coding Round
 
 ### Quick Demo Strategy
+
 ```bash
 # 1. Start with HTTP (faster setup)
 # 2. Show working application
@@ -267,6 +284,7 @@ echo "const WS_URL = 'wss://$SUBDOMAIN/ws';"
 ```
 
 ### Impressive Points to Mention
+
 - "SSL termination at load balancer level"
 - "Backend stays HTTP internally for performance"
 - "Professional domain structure"
@@ -276,6 +294,7 @@ echo "const WS_URL = 'wss://$SUBDOMAIN/ws';"
 ## 🚨 Troubleshooting
 
 ### Certificate Validation Issues
+
 ```bash
 # Check certificate status
 aws acm describe-certificate --certificate-arn $CERT_ARN --region us-east-1
@@ -287,6 +306,7 @@ aws acm describe-certificate --certificate-arn $CERT_ARN --region us-east-1
 ```
 
 ### DNS Resolution Issues
+
 ```bash
 # Test DNS resolution
 nslookup api.yourdomain.com
@@ -297,6 +317,7 @@ aws route53 list-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID
 ```
 
 ### ALB Health Check Issues
+
 ```bash
 # Check target health
 aws elbv2 describe-target-health --target-group-arn $TARGET_GROUP_ARN --region us-east-1

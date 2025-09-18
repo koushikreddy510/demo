@@ -42,19 +42,22 @@ tar -czf build.tar.gz -C dist .
 ## 🔧 Essential Files Checklist
 
 ### Backend Files
+
 - [ ] `backend/src/server.js` - Main app
-- [ ] `backend/package.json` - Dependencies  
+- [ ] `backend/package.json` - Dependencies
 - [ ] `backend/Dockerfile` - Container config
 - [ ] `backend/.env` - Environment variables
 - [ ] `task-definition.json` - ECS config
 
-### Frontend Files  
+### Frontend Files
+
 - [ ] `frontend/src/App.jsx` - React app
 - [ ] `frontend/package.json` - Dependencies
 - [ ] `frontend/Dockerfile.production` - Multi-stage build
 - [ ] `frontend/vite.config.js` - Build config
 
 ### Deployment Files
+
 - [ ] `README.md` - Full documentation
 - [ ] `ec2-userdata.sh` - EC2 bootstrap script
 - [ ] IAM policies for ECR access
@@ -65,7 +68,7 @@ tar -czf build.tar.gz -C dist .
 # Backend health
 curl http://your-alb-url/healthz
 
-# Frontend check  
+# Frontend check
 curl http://your-ec2-ip/
 
 # WebSocket test (browser console)
@@ -92,7 +95,7 @@ ws.onopen = () => ws.send(JSON.stringify({type: 'subscribe', channels: ['test']}
 ## 🎯 Time Allocation (60 min round)
 
 - **Backend setup**: 20 min
-- **Frontend setup**: 15 min  
+- **Frontend setup**: 15 min
 - **Integration & testing**: 15 min
 - **Documentation & cleanup**: 10 min
 

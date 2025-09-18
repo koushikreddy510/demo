@@ -1,0 +1,14 @@
+{
+  "serviceName": "plivo-backend-direct",
+  "cluster": "plivo-cluster",
+  "taskDefinition": "plivo-backend-task",
+  "desiredCount": 1,
+  "launchType": "FARGATE",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": ["subnet-0123456789abcdef0", "subnet-0987654321fedcba0"],
+      "securityGroups": ["sg-02403258878f226e3"],
+      "assignPublicIp": "ENABLED"
+    }
+  }
+}
