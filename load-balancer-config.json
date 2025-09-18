@@ -1,0 +1,7 @@
+[
+  {
+    "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:741879316627:targetgroup/plivo-targets/df9870cbecc9db07",
+    "containerName": "plivo-backend",
+    "containerPort": 3000
+  }
+]
